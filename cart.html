@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - E-Aspirant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+         :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --dark: #e0e0e0;
+            --light: #121212;
+            --gray: #9e9e9e;
+            --gray-light: #2a2a2a;
+            --success: #4caf50;
+            --danger: #f44336;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        header {
+            background-color: #1e1e1e;
+            color: var(--dark);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-right: auto;
+            flex: 1;
+        }
+        
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0 auto;
+            flex: 2;
+            justify-content: center;
+        }
+        
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-actions {
+            display: flex;
+            margin-left: auto;
+            flex: 1;
+            justify-content: flex-end;
+        }
+        
+        .nav-actions button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-left: 1rem;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .cart-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cart-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            flex-grow: 1;
+        }
+        
+        .cart-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+        }
+        
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 2rem;
+        }
+        
+        .cart-items {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        
+        .cart-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto auto auto;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            align-items: center;
+        }
+        
+        .item-image img {
+            width: 80px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .item-details h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .item-details p {
+            margin: 0;
+            color: var(--gray);
+        }
+        
+        .item-price {
+            color: var(--primary) !important;
+            font-weight: 500;
+        }
+        
+        .item-quantity {
+            display: flex;
+            align-items: center;
+        }
+        
+        .item-quantity button {
+            background-color: var(--gray-light);
+            border: none;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            color: var(--dark);
+            cursor: pointer;
+        }
+        
+        .item-quantity span {
+            margin: 0 10px;
+        }
+        
+        .item-total {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .remove-item {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        
+        .cart-summary {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .summary-title {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: var(--gray);
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-light);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 1.5rem;
+        }
+        
+        .checkout-btn:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .continue-shopping {
+            display: inline-block;
+            background-color: var(--gray-light);
+            color: var(--dark);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .continue-shopping:hover {
+            background-color: var(--gray);
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 3rem 0;
+        }
+        
+        .empty-cart i {
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-cart h2 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-cart p {
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+        
+        .points-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        .points-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .points-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .points-input input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--gray-light);
+            background-color: #1e1e1e;
+            color: var(--dark);
+            border-radius: 4px;
+        }
+        
+        .use-points-btn {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .use-points-btn:hover {
+            background-color: var(--primary);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        footer {
+            background-color: var(--gray-light);
+            text-align: center;
+            padding: 1rem 0;
+            color: var(--gray);
+            margin-top: 2rem;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            z-index: 100;
+            color: white;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        
+        .notification.success {
+            background-color: var(--success);
+        }
+        
+        .notification.error {
+            background-color: var(--danger);
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 992px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+            .cart-summary {
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .cart-item {
+                grid-template-columns: 60px 1fr auto;
+                grid-template-areas: "image details remove" "image quantity total";
+                gap: 0.5rem;
+            }
+            .item-image {
+                grid-area: image;
+            }
+            .item-details {
+                grid-area: details;
+            }
+            .item-quantity {
+                grid-area: quantity;
+            }
+            .item-total {
+                grid-area: total;
+                text-align: right;
+            }
+            .remove-item {
+                grid-area: remove;
+                justify-self: end;
+            }
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                margin-top: 1rem;
+                width: 100%;
+            }
+            .nav-links li {
+                margin: 0.5rem 0;
+            }
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .nav-actions {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <header>
+        <nav>
+            <div class="logo">e-Aspirant</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="courses.html">Study Material</a></li>
+                <li><a href="current-affairs.html">Current Affairs</a></li>
+                <li><a href="books.html">Books</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button><i class="fas fa-search"></i></button>
+                <button>
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCounter" class="cart-counter">0</span>
+                </button>
+            </div>
+            <button id="loginBtn">Login</button>
+        </nav>
+    </header>
+
+    <div class="cart-container">
+        <h1 class="cart-title">Your Cart</h1>
+
+        <div class="cart-layout">
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be dynamically inserted here -->
+            </div>
+
+            <div class="cart-summary" id="cartSummary">
+                <h2 class="summary-title">Order Summary</h2>
+                <div class="summary-item">
+                    <span>Subtotal</span>
+                    <span id="subtotal">₹0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>Shipping</span>
+                    <span id="shipping">₹0.00</span>
+                </div>
+
+                <!-- Points section (visible if user has more than 500 points) -->
+                <div class="points-section" id="pointsSection">
+                    <div class="points-label">
+                        <span>Available Points</span>
+                        <span id="availablePoints">0</span>
+                    </div>
+                    <div class="points-input">
+                        <input type="number" id="pointsToUse" placeholder="Enter points to use" min="0">
+                        <button id="usePointsBtn" class="use-points-btn" onclick="usePoints()">Use</button>
+                    </div>
+                </div>
+
+                <table class="summary-details" style="width: 100%; margin-top: 1rem;">
+                    <tr id="pointsDiscountRow" style="display: none;">
+                        <td>Points Discount</td>
+                        <td id="pointsDiscount" style="text-align: right; color: var(--success);">-₹0.00</td>
+                    </tr>
+                    <tr id="finalTotalRow" style="display: none;">
+                        <td style="font-weight: bold;">Final Total</td>
+                        <td id="finalTotal" style="text-align: right; font-weight: bold;">₹0.00</td>
+                    </tr>
+                </table>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span id="total">₹0.00</span>
+                </div>
+
+                <button class="checkout-btn" onclick="proceedToPayment()">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 E-Aspirant. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: '#ffffff'
+                },
+                shape: {
+                    type: 'circle',
+                    stroke: {
+                        width: 0,
+                        color: '#000000'
+                    },
+                    polygon: {
+                        nb_sides: 5
+                    },
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 5,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'repulse'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 400,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    bubble: {
+                        distance: 400,
+                        size: 40,
+                        duration: 2,
+                        opacity: 8,
+                        speed: 3
+                    },
+                    repulse: {
+                        distance: 200,
+                        duration: 0.4
+                    },
+                    push: {
+                        particles_nb: 4
+                    },
+                    remove: {
+                        particles_nb: 2
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
+        function showDonateForm() {
+            document.getElementById('donateModal').style.display = 'block';
+        }
+
+        function closeDonateModal() {
+            document.getElementById('donateModal').style.display = 'none';
+        }
+
+        function showRegisterForm() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+    <script src="cart.js"></script>
+</body>
+
+</html>

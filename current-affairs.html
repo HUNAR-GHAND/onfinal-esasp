@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Affairs - E-Aspirant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+         :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --dark: #e0e0e0;
+            --light: #121212;
+            --gray: #9e9e9e;
+            --gray-light: #2a2a2a;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        header {
+            background-color: #1e1e1e;
+            color: var(--dark);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-right: auto;
+            flex: 1;
+        }
+        
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0 auto;
+            flex: 2;
+            justify-content: center;
+        }
+        
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-actions {
+            display: flex;
+            margin-left: auto;
+            flex: 1;
+            justify-content: flex-end;
+        }
+        
+        .nav-actions button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-left: 1rem;
+            cursor: pointer;
+        }
+        
+        #loginBtn {
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .current-affairs-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            flex-grow: 1;
+        }
+        
+        .biggerSection {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .current-affairs-container h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+        }
+        
+        .news-section,
+        .magazine-section,
+        .video-section {
+            margin-bottom: 2rem;
+        }
+        
+        .news-section h2,
+        .magazine-section h2,
+        .video-section h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .news-section h2 i,
+        .magazine-section h2 i,
+        .video-section h2 i {
+            margin-right: 0.5rem;
+        }
+        
+        .news-grid,
+        .magazine-grid,
+        .video-grid {
+            justify-content: center;
+            align-items: center;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .news-card,
+        .magazine-card,
+        .video-card {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .news-card:hover,
+        .magazine-card:hover,
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .news-image img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .news-content,
+        .magazine-content,
+        .video-content {
+            padding: 1.5rem;
+        }
+        
+        .news-content h3,
+        .magazine-content h3,
+        .video-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .news-content p,
+        .magazine-content p,
+        .video-content p {
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+        
+        .news-list,
+        .magazine-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .news-list li,
+        .magazine-features li {
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .news-list li i,
+        .magazine-features li i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+        
+        .read-more,
+        .download-btn,
+        .watch-btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            z-index: 9999;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .read-more:hover,
+        .download-btn:hover,
+        .watch-btn:hover {
+            z-index: 999999;
+            background-color: var(--primary-light);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .video-thumbnail img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .video-thumbnail i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: white;
+        }
+        
+        footer {
+            background-color: var(--gray-light);
+            text-align: center;
+            padding: 1rem 0;
+            color: var(--gray);
+            margin-top: 2rem;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                margin-top: 1rem;
+                width: 100%;
+            }
+            .nav-links li {
+                margin: 0.5rem 0;
+            }
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .nav-actions {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
+            .news-grid,
+            .magazine-grid,
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <header>
+        <nav>
+            <div class="logo">e-Aspirant</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="courses.html">Study Material</a></li>
+                <li><a href="current-affairs.html">Current Affairs</a></li>
+                <li><a href="books.html">Books</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button><i class="fas fa-search"></i></button>
+                <button><i class="fas fa-shopping-cart"></i></button>
+            </div>
+            <button id="loginBtn">Login</button>
+        </nav>
+    </header>
+
+    <div class="biggerSection flex flex-col justify-center items-center">
+        <div class="current-affairs-container">
+            <h1>Current Affairs</h1>
+
+            <section class="news-section">
+                <h2><i class="fas fa-newspaper"></i> Daily News Analysis</h2>
+                <div class="news-grid ">
+                    <article class="news-card">
+                        <div class="news-image">
+                            <img src="/mainnews.jpeg" alt="Daily News">
+                        </div>
+                        <div class="news-content">
+                            <h3>Today's Headlines</h3>
+                            <p class="date">March 22, 2024</p>
+                            <ul class="news-list">
+                                <li><i class="fas fa-check"></i>Important Government Schemes</li>
+                                <li><i class="fas fa-check"></i>International Relations</li>
+                                <li><i class="fas fa-check"></i>Science & Technology Updates</li>
+                                <li><i class="fas fa-check"></i>Environmental Issues</li>
+                            </ul>
+                        </div>
+                        <a href="news.html" class="read-more" ">Read More</a>
+                    </article>
+
+                
+
+                    <article class="news-card ">
+                        <div class="news-image ">
+                            <img src="/revision3.jpeg " alt="Daily News ">
+                        </div>
+                        <div class="news-content ">
+                            <h3>Instantly Extract the Crux of Your Headlines!</h3>
+                            <p class="date ">March 22, 2024</p>
+                            <ul class="news-list ">
+                                <li><i class="fas fa-check "></i>Best for Revision</li>
+                                <li><i class="fas fa-check "></i>Short Notes for Current affairs</li>
+                                <li><i class="fas fa-check "></i>Accuracy and precision</li>
+                                <li><i class="fas fa-check "></i>Just in few seconds</li>
+                            </ul>
+                            <a href="shorten.html " class="read-more ">Read More</a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="video-section ">
+                <h2><i class="fas fa-video "></i> Video Analysis</h2>
+                <div class="video-grid ">
+                    <div class="video-card ">
+                        <div class="video-thumbnail ">
+                            <img src="/v1.jpg " alt="Daily News Analysis ">
+                            <i class="fas fa-play "></i>
+                        </div><br>
+                        <h3>Daily News Analysis</h3>
+                        <p>Expert analysis of important news</p><br>
+                        <a href="https://youtu.be/cuuw9JU7yuQ?si=9V943NCD9PGjUr9n " class="watch-btn ">Watch Now</a>
+                    </div>
+
+                    <div class="video-card ">
+                        <div class="video-thumbnail ">
+                            <img src="/v2.jpg " alt="Topic-wise Analysis ">
+                            <i class="fas fa-play "></i>
+                        </div><br>
+                        <h3>Topic-wise Analysis</h3>
+                        <p>In-depth coverage of important topics</p><br>
+                        <a href="https://youtu.be/TkJQppegAjQ?si=YolO623KS1xhHwy- " class="watch-btn ">Watch Now</a>
+                    </div>
+                    <div class="video-card ">
+                        <div class="video-thumbnail ">
+                            <img src="/v3.jpg " alt="Daily News Analysis ">
+                            <i class="fas fa-play "></i>
+                        </div><br>
+                        <h3>Daily News Analysis</h3>
+                        <p>Expert analysis of important news</p><br>
+                        <a href="https://youtu.be/RFm2oDkAszg?si=VjvNz11MugxnSSRK " class="watch-btn ">Watch Now</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2024 E-Aspirant. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js "></script>
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: '#ffffff'
+                },
+                shape: {
+                    type: 'circle',
+                    stroke: {
+                        width: 0,
+                        color: '#000000'
+                    },
+                    polygon: {
+                        nb_sides: 5
+                    },
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 5,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'repulse'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 400,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    bubble: {
+                        distance: 400,
+                        size: 40,
+                        duration: 2,
+                        opacity: 8,
+                        speed: 3
+                    },
+                    repulse: {
+                        distance: 200,
+                        duration: 0.4
+                    },
+                    push: {
+                        particles_nb: 4
+                    },
+                    remove: {
+                        particles_nb: 2
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
+        function showDonateForm() {
+            document.getElementById('donateModal').style.display = 'block';
+        }
+
+        function closeDonateModal() {
+            document.getElementById('donateModal').style.display = 'none';
+        }
+
+        function showRegisterForm() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

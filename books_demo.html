@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Books - E-Aspirant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+         :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --dark: #e0e0e0;
+            --light: #121212;
+            --gray: #9e9e9e;
+            --gray-light: #2a2a2a;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            /* For particle background */
+            overflow-x: hidden;
+            /* Prevent horizontal scrollbar */
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        header {
+            background-color: #1e1e1e;
+            color: var(--dark);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-right: auto;
+            flex: 1;
+        }
+        
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0 auto;
+            flex: 2;
+            justify-content: center;
+        }
+        
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-actions {
+            display: flex;
+            margin-left: auto;
+            flex: 1;
+            justify-content: flex-end;
+        }
+        
+        .nav-actions button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-left: 1rem;
+            cursor: pointer;
+        }
+        
+        #loginBtn {
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .books-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            flex-grow: 1;
+        }
+        
+        .books-container h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+        }
+        
+        .donate-section,
+        .register-section,
+        .subject-section {
+            margin-bottom: 2rem;
+        }
+        
+        .donate-section h2,
+        .register-section h2,
+        .subject-section h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .donate-section h2 i,
+        .register-section h2 i,
+        .subject-section h2 i {
+            margin-right: 0.5rem;
+        }
+        
+        .donate-content,
+        .register-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .donate-info,
+        .register-info {
+            flex: 1;
+            padding-right: 2rem;
+        }
+        
+        .donate-image,
+        .register-image {
+            flex: 1;
+        }
+        
+        .donate-image img,
+        .register-image img {
+            width: 60%;
+            height: 60%;
+            margin-left: 200px;
+            border-radius: 8px;
+        }
+        
+        .donate-benefits,
+        .book-list {
+            list-style: none;
+            padding: 20px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .donate-benefits li {
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .donate-benefits li i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+        
+        .donate-btn,
+        .register-btn,
+        .book-link {
+            display: inline-block;
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            margin-left: 26%;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .donate-btn:hover,
+        .register-btn:hover,
+        .book-link:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .book-item {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            margin: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .book-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .book-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+        }
+        
+        .book-item h3,
+        .book-item p {
+            padding: 0 1.5rem;
+            color: var(--dark);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        .modal-content {
+            background-color: #2a2a2a;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+            color: var(--dark);
+        }
+        
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: #1e1e1e;
+            color: var(--dark);
+        }
+        
+        .submit-btn {
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            background-color: var(--primary-light);
+        }
+        
+        footer {
+            background-color: var(--gray-light);
+            text-align: center;
+            padding: 1rem 0;
+            color: var(--gray);
+            margin-top: 2rem;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            z-index: 100;
+            color: white;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        
+        .notification.success {
+            background-color: var(--success);
+        }
+        
+        .notification.error {
+            background-color: var(--danger);
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                margin-top: 1rem;
+                width: 100%;
+            }
+            .nav-links li {
+                margin: 0.5rem 0;
+            }
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .nav-actions {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
+            .donate-content,
+            .register-content {
+                flex-direction: column;
+            }
+            .donate-info,
+            .register-info,
+            .donate-image,
+            .register-image {
+                width: 100%;
+                padding-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <header>
+        <nav>
+            <div class="logo">e-Aspirant</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="courses.html">Study Material</a></li>
+                <li><a href="current-affairs.html">Current Affairs</a></li>
+                <li><a href="books.html">Books</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button><i class="fas fa-search"></i></button>
+                <button><i class="fas fa-shopping-cart"></i></button>
+            </div>
+            <button id="loginBtn">Login</button>
+        </nav>
+    </header>
+
+    <div class="books-container">
+        <h1>Recommended Books for UPSC</h1>
+
+        <section class="donate-section" style="margin: 5px; padding: 20px; background-color: rgba(255, 255, 255, 0.1);border-radius: 12px;">
+            <h2><i class="fas fa-hand-holding-heart "></i> Donate Books</h2>
+            <div class="donate-content ">
+                <div class="donate-info ">
+                    <h3>Share Knowledge, Share Success</h3>
+                    <p>Your old UPSC books can help someone achieve their dreams. Donate your books and make a difference in someone's preparation journey.</p>
+                    <ul class="donate-benefits ">
+                        <li><i class="fas fa-check "></i> Help fellow aspirants</li>
+                        <li><i class="fas fa-check "></i> Support education</li>
+                        <li><i class="fas fa-check "></i> Make a positive impact</li>
+                    </ul>
+                    <button class="donate-btn" onclick="window.location.href='donations.html'">Donate Now</button>
+                </div>
+                <div class="donate-image ">
+                    <img src="/5 Great Places to Donate Your Old Books _ Brightly.jpeg " alt="Donate Books ">
+                </div>
+            </div>
+        </section>
+
+        <section class="register-section " style="margin: 5px; padding: 20px; background-color: rgba(255, 255, 255, 0.1);border-radius: 12px; margin-top: 20px;">
+            <h2><i class="fas fa-user-plus "></i> Register for Books</h2>
+            <div class="register-content ">
+                <div class="register-info ">
+                    <h3>Get Access to Free Books</h3>
+                    <p>Register to receive donated books and study materials. We'll match you with available resources based on your needs.</p>
+                    <button class="register-btn" onclick="window.location.href='login.html'">Register Now</button>
+                </div>
+                <div class="register-image ">
+                    <img src="/register.png " alt="Register for Books ">
+                </div>
+            </div>
+        </section>
+
+        <div class="books-grid">
+            <div class="subject-section">
+                <h2><i class="fas fa-book"></i> General Studies</h2>
+                <div class="book-list">
+                    <div class="book-item">
+                        <img src="/indian polity.jpg" alt="Indian Polity">
+                        <h3>Indian Polity</h3>
+                        <p>By M. Laxmikanth</p>
+                        <p class="book-price">₹55</p>
+                        <a href="#" class="book-link">Add to Cart</a>
+                    </div>
+                    <div class="book-item">
+                        <img src="/indian economy.jpg" alt="Indian Economy">
+                        <h3>Indian Economy</h3>
+                        <p>By Ramesh Singh</p>
+                        <p class="book-price">₹60</p>
+                        <a href="#" class="book-link">Add to Cart</a>
+                    </div>
+                    <div class="book-item">
+                        <img src="/geography of india.jpg" alt="Geography">
+                        <h3>Geography of India</h3>
+                        <p>By Majid Husain</p>
+                        <p class="book-price">₹48</p>
+                        <a href="#" class="book-link">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subject-section">
+                <h2><i class="fas fa-landmark"></i> History</h2>
+                <div class="book-list">
+                    <div class="book-item">
+                        <img src="/ancient history.jpg" alt="Ancient History">
+                        <h3>Ancient History</h3>
+                        <p>By RS Sharma</p>
+                        <p class="book-price">₹50</p>
+                        <a href="#" class="book-link">Add to Cart</a>
+                    </div>
+                    <div class="book-item">
+                        <img src="/m history.jpg" alt="Medieval History">
+                        <h3>Medieval History</h3>
+                        <p>By Satish Chandra</p>
+                        <p class="book-price">₹45</p>
+                        <a href="#" class="book-link">Add to Cart</a>
+                    </div>
+                    <div class="book-item">
+                        <img src="/mod history.jpg" alt="Modern History">
+                        <h3>Modern History</h3>
+                        <p>By Bipin Chandra</p>
+                        <p class="book-price">₹52</p>
+                        <a href="#" class="book-link">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subject-section">
+                <h2><i class="fas fa-flask"></i> Science</h2>
+                <div class="book-list">
+                    <div class="book-item">
+                        <img src="/g scinece.webp" alt="General Science">
+                        <h3>General Science</h3>
+                        <p>By Lucent Publication</p>
+                        <p class="book-price">₹45</p>
+                        <a href="#" class="book-link">Add to Cart</a>
+                    </div>
+                    <div class="book-item">
+                        <img src="sci and tec.jpg" alt="Science & Technology">
+                        <h3>Science & Technology</h3>
+                        <p>By Ravi P. Agrahari</p>
+                        <p class="book-price">₹65</p>
+                        <a href="#" class="book-link">Add to Cart</a>
+                    </div>
+                    <div class="book-item">
+                        <img src="envi.webp" alt="Environment">
+                        <h3>Environment</h3>
+                        <p>By Shankar IAS</p>
+                        <p class="book-price">₹58</p>
+                        <a href="#" class="book-link">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="donateModal " class="modal ">
+            <div class="modal-content ">
+                <span class="close " onclick="closeDonateModal() ">&times;</span>
+                <h2>Donate Books</h2>
+                <form class="donate-form ">
+                    <div class="form-group ">
+                        <label for="donorName ">Full Name</label>
+                        <input type="text " id="donorName " required>
+                    </div>
+                    <div class="form-group ">
+                        <label for="donorEmail ">Email</label>
+                        <input type="email " id="donorEmail " required>
+                    </div>
+                    <div class="form-group ">
+                        <label for="donorPhone ">Phone Number</label>
+                        <input type="tel " id="donorPhone " required>
+                    </div>
+                    <div class="form-group ">
+                        <label for="bookDetails ">Book Details</label>
+                        <textarea id="bookDetails " rows="4 " required placeholder="Please list the books you want to donate with their condition "></textarea>
+                    </div>
+                    <div class="form-group ">
+                        <label for="pickupAddress ">Pickup Address</label>
+                        <textarea id="pickupAddress " rows="3 " required></textarea>
+                    </div>
+                    <button type="submit " class="submit-btn ">Submit Donation</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="registerModal " class="modal ">
+            <div class="modal-content ">
+                <span class="close " onclick="closeRegisterModal() ">&times;</span>
+                <h2>Register for Books</h2>
+                <form class="register-form ">
+                    <div class="form-group ">
+                        <label for="recipientName ">Full Name</label>
+                        <input type="text " id="recipientName " required>
+                    </div>
+                    <div class="form-group ">
+                        <label for="recipientEmail ">Email</label>
+                        <input type="email " id="recipientEmail " required>
+                    </div>
+                    <div class="form-group ">
+                        <label for="recipientPhone ">Phone Number</label>
+                        <input type="tel " id="recipientPhone " required>
+                    </div>
+                    <div class="form-group ">
+                        <label for="preferredSubjects ">Preferred Subjects</label>
+                        <select id="preferredSubjects " multiple required>
+                        <option value="gs ">General Studies</option>
+                        <option value="history ">History</option>
+                        <option value="science ">Science</option>
+                        <option value="geography ">Geography</option>
+                        <option value="polity ">Polity</option>
+                        <option value="economy ">Economy</option>
+                    </select>
+                    </div>
+                    <div class="form-group ">
+                        <label for="deliveryAddress ">Delivery Address</label>
+                        <textarea id="deliveryAddress " rows="3 " required></textarea>
+                    </div>
+                    <button type="submit " class="submit-btn ">Submit Registration</button>
+                </form>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 E-Aspirant. All rights reserved.</p>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js "></script>
+        <script>
+            particlesJS('particles-js', {
+                particles: {
+                    number: {
+                        value: 80,
+                        density: {
+                            enable: true,
+                            value_area: 800
+                        }
+                    },
+                    color: {
+                        value: '#ffffff'
+                    },
+                    shape: {
+                        type: 'circle',
+                        stroke: {
+                            width: 0,
+                            color: '#000000'
+                        },
+                        polygon: {
+                            nb_sides: 5
+                        },
+                    },
+                    opacity: {
+                        value: 0.5,
+                        random: true,
+                        anim: {
+                            enable: false,
+                            speed: 1,
+                            opacity_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    size: {
+                        value: 3,
+                        random: true,
+                        anim: {
+                            enable: false,
+                            speed: 40,
+                            size_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#ffffff',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 5,
+                        direction: 'none',
+                        random: false,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false,
+                        attract: {
+                            enable: false,
+                            rotateX: 600,
+                            rotateY: 1200
+                        }
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: 'repulse'
+                        },
+                        onclick: {
+                            enable: true,
+                            mode: 'push'
+                        },
+                        resize: true
+                    },
+                    modes: {
+                        grab: {
+                            distance: 400,
+                            line_linked: {
+                                opacity: 1
+                            }
+                        },
+                        bubble: {
+                            distance: 400,
+                            size: 40,
+                            duration: 2,
+                            opacity: 8,
+                            speed: 3
+                        },
+                        repulse: {
+                            distance: 200,
+                            duration: 0.4
+                        },
+                        push: {
+                            particles_nb: 4
+                        },
+                        remove: {
+                            particles_nb: 2
+                        }
+                    }
+                },
+                retina_detect: true
+            });
+
+            function showDonateForm() {
+                document.getElementById('donateModal').style.display = 'block';
+            }
+
+            function closeDonateModal() {
+                document.getElementById('donateModal').style.display = 'none';
+            }
+
+            function showRegisterForm() {
+                document.getElementById('registerModal').style.display = 'block';
+            }
+
+            function closeRegisterModal() {
+                document.getElementById('registerModal').style.display = 'none';
+            }
+
+            // Close modals when clicking outside
+            window.onclick = function(event) {
+                if (event.target.className === 'modal') {
+                    event.target.style.display = 'none';
+                }
+            }
+        </script>
+        <script src="cart.js"></script>
+</body>
+
+</html>

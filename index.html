@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Aspirant - Your Path to Success</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="/new-style.css">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        
+        header,
+        footer {
+            background-color: #1e1e1e;
+        }
+        
+        nav a,
+        .logo h3 {
+            color: #e0e0e0;
+        }
+        
+        .modal-content {
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+        }
+        
+        .input-field,
+        .btn {
+            background-color: #333;
+            border: 1px solid #555;
+            color: #e0e0e0;
+        }
+        
+        .input-field:focus {
+            border-color: #4361ee;
+        }
+        
+        .feature-card {
+            background-color: #2a2a2a;
+        }
+        
+        .slide-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #e0e0e0;
+        }
+        
+        .slide-btn:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .dot {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .dot.active {
+            background-color: #4361ee;
+        }
+        
+        .mobile-menu {
+            background-color: #2a2a2a;
+        }
+        
+        .mobile-menu a {
+            color: #e0e0e0;
+        }
+        
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="particles-js"></div>
+
+    <header>
+        <div class="container">
+
+            <nav>
+                <div class="logo text-black">
+                    <h3 class="text-black"> e-Aspirant</h3>
+                </div>
+
+                <ul class="nav-links">
+                    <li style="color: white"><a href="index.html" style="color: white">Home</a></li>
+                    <li style="color: white"><a href="courses.html" style="color: white">Study Material</a></li>
+                    <li style="color: white"><a href="current-affairs.html" style="color: white">Current Affairs</a></li>
+                    <li style="color: white"><a href="books_demo.html" style="color: white">Books</a></li>
+                    <li style="color: white"><a href="contact.html" style="color: white">Contact</a></li>
+                </ul>
+
+                <div class="nav-right">
+                    <a href="/cart.html">
+                        <button>
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="cartCounter" class="cart-counter">0</span>
+                        </button>
+                    </a>
+
+                    <style>
+                        /* Styling for cart count */
+                        
+                        #cart-btn {
+                            position: relative;
+                            border: none;
+                            background: none;
+                            cursor: pointer;
+                        }
+                        
+                        #cart-count {
+                            position: absolute;
+                            top: -5px;
+                            right: -5px;
+                            background: red;
+                            color: white;
+                            font-size: 14px;
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-weight: bold;
+                        }
+                    </style>
+
+                    <script>
+                        // Sample cart count update function
+                        function updateCartCount(count) {
+                            document.getElementById('cart-count').textContent = count;
+                        }
+
+                        // Example: Updating cart count dynamically (Replace with actual logic)
+                        let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+                        updateCartCount(cartItems.length);
+
+                        // Simulating adding items to cart (You should replace this with actual add-to-cart logic)
+                        function addToCart(item) {
+                            cartItems.push(item);
+                            localStorage.setItem("cartItems", JSON.stringify(cartItems));
+                            updateCartCount(cartItems.length);
+                        }
+                    </script>
+
+                    <button id="loginBtn" class="btn btn-primary">
+                        Login
+                    </button>
+                    <button class="mobile-menu-btn" id="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+
+        <div id="mobile-menu" class="mobile-menu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="courses.html">Study Material</a></li>
+                <li><a href="current-affairs.html">Current Affairs</a></li>
+                <li><a href="books.html">Books</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+        <div id="overlay" class="overlay"></div>
+    </header>
+
+    <!-- Updated Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Login</h2>
+                <button class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email" class="input-label" style="color: white">Email</label>
+                    <input type="email" id="email" class="input-field" required placeholder="Enter your email">
+                </div>
+
+                <div class="input-group">
+                    <label for="password" class="input-label" style="color: white">Password</label>
+                    <input type="password" id="password" class="input-field" required placeholder="Enter your password">
+                </div>
+
+                <div class="input-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="checkbox">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    Login
+                </button>
+            </form>
+
+            <div class="divider" style="margin: 20px 0; text-align: center; position: relative; display: flex; align-items: center;">
+                <hr style="flex-grow: 1; border: 0; border-top: 1px solid #555;">
+                <span style="padding: 0 10px; background: #2a2a2a; color: #e0e0e0;">OR</span>
+                <hr style="flex-grow: 1; border: 0; border-top: 1px solid #555;">
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn google-btn" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; margin-bottom: 10px; background-color: #333; border: 1px solid #555; border-radius: 4px; cursor: pointer; color: #e0e0e0;">
+                    <i class="fab fa-google" style="margin-right: 10px; color: #DB4437;"></i>
+                    Continue with Google
+                </button>
+
+                <button class="social-btn apple-btn" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; margin-bottom: 10px; background-color: #333; border: 1px solid #555; border-radius: 4px; cursor: pointer; color: #e0e0e0;">
+                    <i class="fab fa-apple" style="margin-right: 10px;"></i>
+                    Continue with Apple
+                </button>
+
+                <button id="phoneLoginBtn" class="social-btn phone-btn" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; margin-bottom: 20px; background-color: #333; border: 1px solid #555; border-radius: 4px; cursor: pointer; color: #e0e0e0;">
+                    <i class="fas fa-mobile-alt" style="margin-right: 10px; color: #4CAF50;"></i>
+                    Continue with Phone
+                </button>
+            </div>
+
+            <div style="text-align: center; margin-top: 10px; margin-bottom: 15px;">
+                <p style="color: white;">Don't have an account? <a href="/signup.html" class="register-link" style="color: #4361ee; text-decoration: underline; font-weight: bold;">Register</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phone verification modal -->
+    <div id="phoneVerificationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Phone Verification</h2>
+                <button class="close-btn-phone">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="phoneVerificationForm">
+                <div class="input-group">
+                    <label for="phoneNumber" class="input-label" style="color: white">Phone Number</label>
+                    <input type="tel" id="phoneNumber" class="input-field" required placeholder="Enter your phone number">
+                </div>
+
+                <button type="button" id="sendOtpBtn" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    Send OTP
+                </button>
+
+                <div id="otpSection" style="display: none; margin-top: 20px;">
+                    <div class="input-group">
+                        <label for="otpCode" class="input-label" style="color: white">OTP Code</label>
+                        <input type="text" id="otpCode" class="input-field" required placeholder="Enter OTP received">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                        Verify & Login
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <main>
+        <section class="slideshow-container">
+
+            <div class="slide">
+                <img src="/NDA.jpeg" alt="NDA Academy">
+                <div class="quote-content">
+                    <p class="text-2xl font-medium">"Do you have it in you?"</p>
+                </div>
+            </div>
+
+            <div class="slide">
+                <img src="/airforce.jpg" alt="AFCAT Academy">
+                <div class="quote-content">
+                    <p class="text-2xl font-medium">"Indian Air Force: Overspeeding? Do it in the blues!"</p>
+                </div>
+            </div>
+
+            <div class="slides">
+                <div class="slide active">
+                    <img src="/navy.jpg" alt="Indian Navy">
+                    <div class="quote-content">
+                        <p class="text-2xl font-medium">"Indian Navy: Guardians of the Seas, Protectors of the Nation."</p>
+                    </div>
+                </div>
+
+
+                <div class="slide">
+                    <img src="/ota.jpg" alt="CDS Academy">
+                    <div class="quote-content">
+                        <p class="text-2xl font-medium">"You carry the potential, so why not belong to maroon?"</p>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+
+            <button class="slide-btn prev">❮</button>
+            <button class="slide-btn next">❯</button>
+
+            <div class="slide-dots"></div>
+        </section>
+
+
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Why Choose e-Aspirant?</h2>
+
+                <div class="features-grid">
+                    <div class="feature-card slide-in-up" style="animation-delay: 0.1s">
+                        <div class="feature-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <h3 class="feature-title">Daily News Analysis</h3>
+                        <p class="feature-desc">UPSC relevant news coverage with expert insights and analysis</p>
+                    </div>
+
+                    <div class="feature-card slide-in-up" style="animation-delay: 0.2s">
+                        <div class="feature-icon">
+                            <i class="fas fa-book-reader"></i>
+                        </div>
+                        <h3 class="feature-title">Monthly Magazine</h3>
+                        <p class="feature-desc">Comprehensive current affairs coverage in an easy-to-digest format</p>
+                    </div>
+
+                    <div class="feature-card slide-in-up" style="animation-delay: 0.3s">
+                        <div class="feature-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3 class="feature-title">Video Lectures</h3>
+                        <p class="feature-desc">Expert analysis of important events by experienced educators</p>
+                    </div>
+
+                    <div class="feature-card slide-in-up" style="animation-delay: 0.4s">
+                        <div class="feature-icon">
+                            <i class="fas fa-pencil-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Handwritten Notes</h3>
+                        <p class="feature-desc">Quality notes from toppers to enhance your preparation</p>
+                    </div>
+
+                    <div class="feature-card slide-in-up" style="animation-delay: 0.5s">
+                        <div class="feature-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3 class="feature-title">Recommended Books</h3>
+                        <p class="feature-desc">Curated book list for UPSC aspirants to streamline your study</p>
+                    </div>
+
+                    <div class="feature-card slide-in-up" style="animation-delay: 0.6s">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3 class="feature-title">PDF Materials</h3>
+                        <p class="feature-desc">Digital study resources for anytime, anywhere learning</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-top">
+                    <div>
+                        <div class="footer-logo">e-Aspirant</div>
+                        <p class="footer-tagline">Your Path to Success</p>
+                    </div>
+
+                    <div class="social-links">
+                        <a href="https://x.com/e_aspirant"><i class="fab fa-twitter"></i></a>
+
+                        <a href="https://www.instagram.com/e_aspirant04?igsh=MXg1OXBjY2h1bmo0cQ=="><i class="fab fa-instagram"></i></a>
+
+                        <a href="mailto:easpirants222@gmail.com"><i class="fab fa-google"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-divider"></div>
+
+                <p class="footer-copyright">&copy; 2025 e-Aspirant. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Slideshow functionality
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            const dotsContainer = document.querySelector('.slide-dots');
+
+            let currentSlide = 0;
+            const slideCount = slides.length;
+
+            // Create dots based on number of slides
+            function createDots() {
+                for (let i = 0; i < slideCount; i++) {
+                    const dot = document.createElement('button');
+                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                    dot.classList.add('dot');
+                    if (i === 0) dot.classList.add('active');
+
+                    dot.addEventListener('click', () => {
+                        goToSlide(i);
+                    });
+
+                    dotsContainer.appendChild(dot);
+                }
+            }
+
+            // Initialize dots
+            createDots();
+            const dots = document.querySelectorAll('.dot');
+
+            // Function to display a specific slide
+            function goToSlide(slideIndex) {
+                // Hide all slides
+                slides.forEach(slide => {
+                    slide.classList.remove('active');
+                    // Reset animation
+                    slide.querySelector('.quote-content').style.animation = 'none';
+                    slide.querySelector('.quote-content').offsetHeight; // Trigger reflow
+                });
+
+                // Update dots
+                dots.forEach(dot => dot.classList.remove('active'));
+
+                // Show current slide and activate corresponding dot
+                slides[slideIndex].classList.add('active');
+                dots[slideIndex].classList.add('active');
+
+                // Restart quote animation
+                slides[slideIndex].querySelector('.quote-content').style.animation = 'fadeUp 0.8s ease 0.2s both';
+
+                // Update current slide index
+                currentSlide = slideIndex;
+            }
+
+            // Next slide function
+            function nextSlide() {
+                let newIndex = currentSlide + 1;
+                if (newIndex >= slideCount) {
+                    newIndex = 0;
+                }
+                goToSlide(newIndex);
+            }
+
+            // Previous slide function
+            function prevSlide() {
+                let newIndex = currentSlide - 1;
+                if (newIndex < 0) {
+                    newIndex = slideCount - 1;
+                }
+                goToSlide(newIndex);
+            }
+
+            // Add event listeners for buttons
+            prevBtn.addEventListener('click', prevSlide);
+            nextBtn.addEventListener('click', nextSlide);
+
+            // Auto slide functionality
+            let slideInterval = setInterval(nextSlide, 2500);
+
+            // Pause auto slide on hover
+            const slideshowContainer = document.querySelector('.slideshow-container');
+            slideshowContainer.addEventListener('mouseenter', () => {
+                clearInterval(slideInterval);
+            });
+
+            slideshowContainer.addEventListener('mouseleave', () => {
+                slideInterval = setInterval(nextSlide, 2500);
+            });
+
+            // Add keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                } else if (e.key === 'ArrowRight') {
+                    nextSlide();
+                }
+            });
+
+            // Mobile swipe functionality
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            slideshowContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {
+                passive: true
+            });
+
+            slideshowContainer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, {
+                passive: true
+            });
+
+            function handleSwipe() {
+                // Detect direction
+                if (touchEndX < touchStartX - 50) {
+                    // Swipe left, go to next slide
+                    nextSlide();
+                } else if (touchEndX > touchStartX + 50) {
+                    // Swipe right, go to previous slide
+                    prevSlide();
+                }
+            }
+
+            // Login and Phone Verification Modal functionality
+            const loginBtn = document.getElementById('loginBtn');
+            const loginModal = document.getElementById('loginModal');
+            const phoneLoginBtn = document.getElementById('phoneLoginBtn');
+            const phoneVerificationModal = document.getElementById('phoneVerificationModal');
+            const sendOtpBtn = document.getElementById('sendOtpBtn');
+            const otpSection = document.getElementById('otpSection');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('overlay');
+            const closeBtns = document.querySelectorAll('.close-btn, .close-btn-phone');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('show');
+                overlay.classList.toggle('show');
+
+                // Toggle menu icon
+                const menuIcon = mobileMenuBtn.querySelector('i');
+                if (mobileMenu.classList.contains('show')) {
+                    menuIcon.classList.remove('fa-bars');
+                    menuIcon.classList.add('fa-times');
+                } else {
+                    menuIcon.classList.remove('fa-times');
+                    menuIcon.classList.add('fa-bars');
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                mobileMenu.classList.remove('show');
+                overlay.classList.remove('show');
+                loginModal.classList.remove('show');
+                phoneVerificationModal.classList.remove('show');
+
+                // Reset menu icon
+                const menuIcon = mobileMenuBtn.querySelector('i');
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+            });
+
+            // Login modal functionality
+            loginBtn.addEventListener('click', () => {
+                loginModal.classList.add('show');
+                overlay.classList.add('show');
+            });
+
+            // Close buttons for modals
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    loginModal.classList.remove('show');
+                    phoneVerificationModal.classList.remove('show');
+                    overlay.classList.remove('show');
+                });
+            });
+
+            // Phone login button - switches from login to phone verification modal
+            if (phoneLoginBtn) {
+                phoneLoginBtn.addEventListener('click', () => {
+                    loginModal.classList.remove('show');
+                    phoneVerificationModal.classList.add('show');
+                });
+            }
+
+            // Send OTP button
+            if (sendOtpBtn) {
+                sendOtpBtn.addEventListener('click', () => {
+                    const phoneNumber = document.getElementById('phoneNumber').value;
+                    if (phoneNumber.trim() !== '') {
+                        // Here you would normally send an OTP to the user's phone
+                        // For demo purposes, we'll just show the OTP input field
+                        otpSection.style.display = 'block';
+                        sendOtpBtn.textContent = 'Resend OTP';
+
+                        // Simulate OTP sent alert
+                        alert('OTP sent to ' + phoneNumber);
+                    } else {
+                        alert('Please enter a valid phone number');
+                    }
+                });
+            }
+
+            // Form submissions (for demo purposes)
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // Add your login logic here
+                    alert('Login form submitted');
+                    loginModal.classList.remove('show');
+                    overlay.classList.remove('show');
+                });
+            }
+
+            const phoneForm = document.getElementById('phoneVerificationForm');
+            if (phoneForm) {
+                phoneForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // Add your OTP verification logic here
+                    alert('OTP verification successful');
+                    phoneVerificationModal.classList.remove('show');
+                    overlay.classList.remove('show');
+                });
+            }
+
+            // Social login buttons (for demo purposes)
+            const googleBtn = document.querySelector('.google-btn');
+            if (googleBtn) {
+                googleBtn.addEventListener('click', function() {
+                    // Add Google login logic here
+                    alert('Google login initiated');
+                });
+            }
+
+            const appleBtn = document.querySelector('.apple-btn');
+            if (appleBtn) {
+                appleBtn.addEventListener('click', function() {
+                    // Add Apple login logic here
+                    alert('Apple login initiated');
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS("particles-js", {
+                    "particles": {
+                        "number": {
+                            "value": 80,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": "#ffffff"
+                        },
+                        "shape": {
+                            "type": "circle",
+                            "stroke": {
+                                "width": 0,
+                                "color": "#000000"
+                            }
+                        },
+                        "opacity": {
+                            "value": 0.2,
+                            "random": false,
+                            "anim": {
+                                "enable": false
+                            }
+                        },
+                        "size": {
+                            "value": 3,
+                            "random": true
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 150,
+                            "color": "#ffffff",
+                            "opacity": 0.2,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 5,
+                            "direction": "none",
+                            "random": false,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false
+                        }
+                    },
+                })
+            }
+        })
+    </script>
+</body>
+
+</html>

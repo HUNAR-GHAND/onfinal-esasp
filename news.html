@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            background-color: #121212;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 0;
+            position: relative;
+            z-index: 10;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-links li {
+            margin: 0 15px;
+            position: relative;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
+            padding: 5px 0;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #fff;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+        
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+        
+        .news-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+        }
+        
+        .news-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .news-item h2 {
+            margin-bottom: 10px;
+        }
+        
+        .news-item p {
+            line-height: 1.6;
+        }
+        
+        footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            text-align: center;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <header>
+        <nav>
+            <div class="logo">e-Aspirants</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="courses.html">Courses</a></li>
+                <li><a href="current-affairs.html">Current Affairs</a></li>
+                <li><a href="books.html">Books</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="news-container" id="news-content">
+    </div>
+
+    <footer>
+        <p>&copy; 2024 e-Aspirants</p>
+    </footer>
+
+    <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true,
+            "config_demo": {
+                "hide_card": false,
+                "background_color": "#472342",
+                "background_image": "",
+                "background_position": "50% 50%",
+                "background_repeat": "no-repeat",
+                "background_size": "cover"
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('http://127.0.0.1:5000/get-news')
+                // app.py -> running -> api -> getting data where app.py is calling the external api for news
+
+            .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const newsContainer = document.getElementById('news-content');
+                    // Make sure there are headlines and articles inside it
+                    if (data.headlines && data.headlines.articles && data.headlines.articles.length > 0) {
+                        /// main problem -> // it was checking if data was greater than 0, instead we had to check if data.headlines > 0 
+
+                        data.headlines.articles.forEach(news => { // Loop through the articles
+                            console.log('We got some data');
+                            const newsItem = document.createElement('div');
+                            newsItem.classList.add('news-item');
+                            console.log('News headline: ', news.title); // Use 'title' instead of 'headlines'
+                            newsItem.innerHTML = `
+                        <h2>${news.title}</h2> <!-- Display the title here -->
+                        <p><strong>Source:</strong> ${news.source.name}</p> <!-- Corrected the source name -->
+                        <p><strong>Description:</strong> ${news.description || news.content}</p>
+                        <p><a href="${news.url}" target="_blank">Read More</a></p>
+                        <img src="${news.urlToImage}" alt="News Image" style="max-width:100%; height:auto;">
+                        <p>Published At: ${new Date(news.publishedAt).toLocaleString()}</p> <!-- Formatted the date -->
+                    `;
+                            newsContainer.appendChild(newsItem);
+                        });
+                    } else {
+                        newsContainer.innerHTML = '<p>No news available.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching news:', error);
+                    document.getElementById('news-content').innerHTML = '<p>Failed to load news.</p>';
+                });
+        });
+    </script>
+</body>
+
+</html>
