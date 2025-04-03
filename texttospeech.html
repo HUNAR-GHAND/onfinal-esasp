@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        textarea {
+            width: 80%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        
+        select,
+        button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        select {
+            width: 50%;
+        }
+        
+        button {
+            background-color: #008080;
+            color: white;
+        }
+        
+        button:hover {
+            background-color: #006666;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Text to Speech Converter</h1>
+    <textarea id="text" placeholder="Enter text here..."></textarea><br>
+
+    <select id="voiceSelect"></select><br>
+
+    <button onclick="speakText()">🔊 Speak</button>
+    <button onclick="pauseSpeech()">⏸ Pause</button>
+    <button onclick="resumeSpeech()">▶ Resume</button>
+    <button onclick="stopSpeech()">⏹ Stop</button>
+
+    <script>
+        let speech = new SpeechSynthesisUtterance();
+        let voices = [];
+
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            let voiceSelect = document.getElementById("voiceSelect");
+
+            voiceSelect.innerHTML = ''; // Clear previous voices
+            voices.forEach((voice, index) => {
+                let option = document.createElement("option");
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        speechSynthesis.onvoiceschanged = loadVoices;
+
+        function speakText() {
+            let text = document.getElementById("text").value;
+            if (text.trim() === "") return;
+
+            speech.text = text;
+            speech.voice = voices[document.getElementById("voiceSelect").value];
+            speechSynthesis.speak(speech);
+        }
+
+        function pauseSpeech() {
+            speechSynthesis.pause();
+        }
+
+        function resumeSpeech() {
+            speechSynthesis.resume();
+        }
+
+        function stopSpeech() {
+            speechSynthesis.cancel();
+        }
+    </script>
+</body>
+
+</html>

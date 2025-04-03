@@ -29,15 +29,6 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-        
-        #particles-js {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
         }
         
         header {
@@ -80,130 +71,120 @@
             text-decoration: none;
             transition: color 0.3s ease;
             font-weight: 500;
-            position: relative;
         }
         
-        .checkout-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 2rem;
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
             flex-grow: 1;
         }
         
-        .checkout-title {
-            text-align: center;
-            margin-bottom: 2rem;
-            color: var(--secondary);
+        .checkout-container {
+            flex: 1;
+            min-width: 300px;
         }
         
-        .checkout-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
+        .summary-container {
+            flex: 0 0 300px;
         }
         
-        .order-summary,
-        .payment-section {
-            background-color: #2a2a2a;
+        .card {
+            background-color: var(--gray-light);
             border-radius: 8px;
-            padding: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
         
-        .section-title {
+        .card-title {
+            font-size: 1.5rem;
             margin-top: 0;
             margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--gray-light);
+            border-bottom: 1px solid var(--gray);
+            padding-bottom: 0.5rem;
         }
         
         .summary-list {
             list-style: none;
             padding: 0;
-            margin: 0 0 1.5rem 0;
         }
         
         .summary-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--gray-light);
-        }
-        
-        .summary-item:last-child {
-            border-bottom: none;
+            margin-bottom: 0.75rem;
         }
         
         .summary-total {
             display: flex;
             justify-content: space-between;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
             padding-top: 1rem;
-            border-top: 1px solid var(--gray-light);
+            border-top: 1px solid var(--gray);
             font-weight: bold;
             font-size: 1.2rem;
         }
         
-        #payment-form {
-            margin-top: 1.5rem;
-        }
-        
-        #payment-element {
-            margin-bottom: 1.5rem;
-        }
-        
-        .pay-button {
-            display: block;
-            width: 100%;
+        #submit {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 1rem;
             border-radius: 4px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
+            width: 100%;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             transition: background-color 0.3s ease;
         }
         
-        .pay-button:hover {
+        #submit:hover {
             background-color: var(--primary-light);
         }
         
-        .pay-button:disabled {
-            opacity: 0.5;
+        #submit:disabled {
+            background-color: var(--gray);
             cursor: not-allowed;
         }
         
-        #payment-message {
-            color: var(--danger);
-            margin-top: 1rem;
-            text-align: center;
-        }
-        
-        #payment-success {
-            color: var(--success);
-            margin-top: 1rem;
-            text-align: center;
-        }
-        
         .spinner {
-            display: inline-block;
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--primary);
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
         }
         
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
+            to {
                 transform: rotate(360deg);
             }
+        }
+        
+        .payment-message {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+        
+        .payment-success {
+            color: var(--success);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
         }
         
         footer {
@@ -211,19 +192,12 @@
             text-align: center;
             padding: 1rem 0;
             color: var(--gray);
-            margin-top: 2rem;
-        }
-        
-        @media (max-width: 768px) {
-            .checkout-layout {
-                grid-template-columns: 1fr;
-            }
+            margin-top: auto;
         }
     </style>
 </head>
 
 <body>
-    <div id="particles-js"></div>
     <header>
         <nav>
             <div class="logo">e-Aspirant</div>
@@ -237,16 +211,27 @@
         </nav>
     </header>
 
-    <div class="checkout-container">
-        <h1 class="checkout-title">Checkout</h1>
+    <div class="main-container">
+        <div class="checkout-container">
+            <div class="card">
+                <h2 class="card-title">Checkout</h2>
+                <div id="payment-form">
+                    <button id="submit" type="button">
+                        <div id="spinner" class="spinner"></div>
+                        <span id="button-text">Pay Now</span>
+                    </button>
+                    <div id="payment-message" class="payment-message"></div>
+                    <div id="payment-success" class="payment-success"></div>
+                </div>
+            </div>
+        </div>
 
-        <div class="checkout-layout">
-            <div class="order-summary">
-                <h2 class="section-title">Order Summary</h2>
-                <ul class="summary-list" id="orderItems">
-                    <!-- Order items will be dynamically inserted here -->
+        <div class="summary-container">
+            <div class="card">
+                <h2 class="card-title">Order Summary</h2>
+                <ul id="orderItems" class="summary-list">
+                    <!-- Order items will be inserted here -->
                 </ul>
-
                 <div class="summary-item">
                     <span>Subtotal</span>
                     <span id="summarySubtotal">₹0.00</span>
@@ -255,30 +240,14 @@
                     <span>Shipping</span>
                     <span id="summaryShipping">₹0.00</span>
                 </div>
-                <div class="summary-item" id="pointsDiscountRow" style="display: none;">
+                <div id="pointsDiscountRow" class="summary-item" style="display: none;">
                     <span>Points Discount</span>
                     <span id="summaryPointsDiscount">-₹0.00</span>
                 </div>
-
                 <div class="summary-total">
                     <span>Total</span>
                     <span id="summaryTotal">₹0.00</span>
                 </div>
-            </div>
-
-            <div class="payment-section">
-                <h2 class="section-title">Payment Details</h2>
-                <form id="payment-form">
-                    <div id="payment-element">
-                        <!-- Stripe Elements will be inserted here -->
-                    </div>
-                    <button id="submit" class="pay-button">
-                        <div class="spinner" id="spinner" style="display: none;"></div>
-                        <span id="button-text">Pay Now</span>
-                    </button>
-                    <div id="payment-message" style="display: none;"></div>
-                    <div id="payment-success" style="display: none;"></div>
-                </form>
             </div>
         </div>
     </div>
@@ -287,114 +256,256 @@
         <p>&copy; 2024 E-Aspirant. All rights reserved.</p>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="checkout.js"></script>
     <script>
-        particlesJS('particles-js', {
-            particles: {
-                number: {
-                    value: 80,
-                    density: {
-                        enable: true,
-                        value_area: 800
-                    }
-                },
-                color: {
-                    value: '#ffffff'
-                },
-                shape: {
-                    type: 'circle',
-                    stroke: {
-                        width: 0,
-                        color: '#000000'
-                    },
-                    polygon: {
-                        nb_sides: 5
-                    },
-                },
-                opacity: {
-                    value: 0.5,
-                    random: true,
-                    anim: {
-                        enable: false,
-                        speed: 1,
-                        opacity_min: 0.1,
-                        sync: false
-                    }
-                },
-                size: {
-                    value: 3,
-                    random: true,
-                    anim: {
-                        enable: false,
-                        speed: 40,
-                        size_min: 0.1,
-                        sync: false
-                    }
-                },
-                line_linked: {
-                    enable: true,
-                    distance: 150,
-                    color: '#ffffff',
-                    opacity: 0.4,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 5,
-                    direction: 'none',
-                    random: false,
-                    straight: false,
-                    out_mode: 'out',
-                    bounce: false,
-                    attract: {
-                        enable: false,
-                        rotateX: 600,
-                        rotateY: 1200
-                    }
-                }
-            },
-            interactivity: {
-                detect_on: 'canvas',
-                events: {
-                    onhover: {
-                        enable: true,
-                        mode: 'repulse'
-                    },
-                    onclick: {
-                        enable: true,
-                        mode: 'push'
-                    },
-                    resize: true
-                },
-                modes: {
-                    grab: {
-                        distance: 400,
-                        line_linked: {
-                            opacity: 1
-                        }
-                    },
-                    bubble: {
-                        distance: 400,
-                        size: 40,
-                        duration: 2,
-                        opacity: 8,
-                        speed: 3
-                    },
-                    repulse: {
-                        distance: 200,
-                        duration: 0.4
-                    },
-                    push: {
-                        particles_nb: 4
-                    },
-                    remove: {
-                        particles_nb: 2
-                    }
-                }
-            },
-            retina_detect: true
+        // Initialize variables
+        let cart = [];
+        let orderData = {
+            items: [],
+            subtotal: 0,
+            shipping: 0,
+            pointsUsed: 0,
+            pointsDiscount: 0,
+            total: 0
+        };
+        let stripe;
+
+        // Initialize page on load
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load cart from localStorage
+            loadCart();
+
+            // If cart is empty, redirect to cart page
+            if (cart.length === 0) {
+                window.location.href = 'cart.html';
+                return;
+            }
+
+            // Calculate order totals
+            calculateOrderTotals();
+
+            // Display order summary
+            renderOrderSummary();
+
+            // Initialize Stripe
+            try {
+                await initializeStripe();
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
         });
+
+        // Load cart from localStorage
+        function loadCart() {
+            const savedCart = localStorage.getItem('eAspirantCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            } else {
+                cart = [];
+            }
+
+            // Get points discount if applied on cart page
+            const pointsData = localStorage.getItem('eAspirantPointsDiscount');
+            if (pointsData) {
+                const {
+                    pointsUsed,
+                    pointsDiscount
+                } = JSON.parse(pointsData);
+                orderData.pointsUsed = pointsUsed || 0;
+                orderData.pointsDiscount = pointsDiscount || 0;
+            }
+        }
+
+        // Calculate order totals
+        function calculateOrderTotals() {
+            // Calculate subtotal
+            orderData.subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+            // Calculate shipping
+            orderData.shipping = orderData.subtotal > 200 ? 0 : 30; // Free shipping for orders over 200
+
+            // Calculate total (with points discount if applied)
+            orderData.total = orderData.subtotal + orderData.shipping - orderData.pointsDiscount;
+
+            // Make sure total is not negative
+            if (orderData.total < 0) orderData.total = 0;
+
+            // Prepare items for order
+            orderData.items = cart.map(item => ({
+                title: item.title,
+                price: item.price,
+                quantity: item.quantity
+            }));
+        }
+
+        // Render order summary
+        function renderOrderSummary() {
+            const orderItemsContainer = document.getElementById('orderItems');
+            const subtotalElement = document.getElementById('summarySubtotal');
+            const shippingElement = document.getElementById('summaryShipping');
+            const pointsDiscountRow = document.getElementById('pointsDiscountRow');
+            const pointsDiscountElement = document.getElementById('summaryPointsDiscount');
+            const totalElement = document.getElementById('summaryTotal');
+
+            // Display order items
+            let orderItemsHTML = '';
+            cart.forEach(item => {
+                orderItemsHTML += `
+                    <li class="summary-item">
+                        <span>${item.title} × ${item.quantity}</span>
+                        <span>₹${(item.price * item.quantity).toFixed(2)}</span>
+                    </li>
+                `;
+            });
+            orderItemsContainer.innerHTML = orderItemsHTML;
+
+            // Display order totals
+            subtotalElement.textContent = `₹${orderData.subtotal.toFixed(2)}`;
+            shippingElement.textContent = orderData.shipping === 0 ? 'FREE' : `₹${orderData.shipping.toFixed(2)}`;
+
+            // Display points discount if applied
+            if (orderData.pointsDiscount > 0) {
+                pointsDiscountRow.style.display = 'flex';
+                pointsDiscountElement.textContent = `-₹${orderData.pointsDiscount.toFixed(2)}`;
+            }
+
+            // Display total
+            totalElement.textContent = `₹${orderData.total.toFixed(2)}`;
+        }
+
+        // Initialize Stripe
+        async function initializeStripe() {
+            try {
+                // Get your publishable key
+                const publishableKey = 'pk_test_51R8HicQ9YFhYWC0XbKfUytOY7TAxgovlPo8PRdqkLIuBm0ziVxC8nL6V4RUx05hy1dUQNIv6P3a2p6Un1fn4hIM7006tr9Fj2x';
+
+                // Make sure we have a valid key
+                if (!publishableKey || publishableKey.includes('your_stripe_publishable_key')) {
+                    throw new Error('Please set your Stripe publishable key');
+                }
+
+                // Create Stripe instance
+                stripe = Stripe(publishableKey);
+
+                // Don't create payment intent if total is zero
+                if (orderData.total <= 0) {
+                    showMessage('Cannot process a zero amount payment', 'error');
+                    return;
+                }
+
+                // Set up the pay now button handler
+                document.getElementById('submit').addEventListener('click', handleCheckoutRedirect);
+
+                console.log('Stripe initialized successfully');
+            } catch (error) {
+                console.error('Stripe initialization error:', error);
+                showMessage(`Stripe initialization error: ${error.message}`, 'error');
+            }
+        }
+
+        // Handle redirect to Stripe Checkout
+        async function handleCheckoutRedirect(e) {
+            e.preventDefault();
+            setLoading(true);
+
+            try {
+                // Create checkout session
+                const response = await fetch('/api/create-payment-intent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        amount: orderData.total,
+                        productName: "E-Aspirant Purchase",
+                        metadata: {
+                            cartItems: JSON.stringify(orderData.items.map(item => ({
+                                title: item.title,
+                                quantity: item.quantity
+                            })))
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to create checkout session');
+                }
+
+                const {
+                    url
+                } = await response.json();
+
+                // Save order data before redirecting
+                await saveOrderBeforeCheckout();
+
+                // Redirect to Stripe Checkout
+                window.location.href = url;
+            } catch (error) {
+                console.error('Checkout error:', error);
+                showMessage(`Payment error: ${error.message}`);
+                setLoading(false);
+            }
+        }
+
+        // Save order before checkout
+        async function saveOrderBeforeCheckout() {
+            try {
+                // Get user ID from localStorage if available (logged in user)
+                const userData = localStorage.getItem('eAspirantUser');
+                const userId = userData ? JSON.parse(userData).id : null;
+
+                const orderPayload = {
+                    userId,
+                    items: orderData.items,
+                    subtotal: orderData.subtotal,
+                    shipping: orderData.shipping,
+                    pointsUsed: orderData.pointsUsed,
+                    pointsDiscount: orderData.pointsDiscount,
+                    total: orderData.total,
+                    status: 'pending'
+                };
+
+                localStorage.setItem('eAspirantPendingOrder', JSON.stringify(orderPayload));
+                return true;
+            } catch (error) {
+                console.error('Save order error:', error);
+                return false;
+            }
+        }
+
+        // Show message
+        function showMessage(messageText, type = 'error') {
+            const messageElement = document.getElementById('payment-message');
+            messageElement.textContent = messageText;
+            messageElement.style.display = 'block';
+
+            if (type === 'error') {
+                messageElement.style.color = 'var(--danger)';
+            } else {
+                messageElement.style.color = 'var(--success)';
+            }
+
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // Set loading state
+        function setLoading(isLoading) {
+            const submitButton = document.getElementById('submit');
+            const buttonText = document.getElementById('button-text');
+            const spinner = document.getElementById('spinner');
+
+            if (isLoading) {
+                submitButton.disabled = true;
+                spinner.style.display = 'inline-block';
+                buttonText.textContent = 'Processing...';
+            } else {
+                submitButton.disabled = false;
+                spinner.style.display = 'none';
+                buttonText.textContent = 'Pay Now';
+            }
+        }
     </script>
 </body>
 

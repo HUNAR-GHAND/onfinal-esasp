@@ -118,8 +118,8 @@ function renderOrderSummary() {
 // Initialize Stripe
 async function initializeStripe() {
     try {
-        // Get your publishable key - replace with your actual key from Stripe dashboard
-        const publishableKey = 'pk_test_51R8HicQ9YFhYWC0XbKfUytOY7TAxgovlPo8PRdqkLIuBm0ziVxC8nL6V4RUx05hy1dUQNIv6P3a2p6Un1fn4hIM7006tr9Fj2x'; // Replace with your actual key
+        // Get your publishable key
+        const publishableKey = 'pk_test_51R8HicQ9YFhYWC0XbKfUytOY7TAxgovlPo8PRdqkLIuBm0ziVxC8nL6V4RUx05hy1dUQNIv6P3a2p6Un1fn4hIM7006tr9Fj2x';
 
         // Make sure we have a valid key
         if (!publishableKey || publishableKey.includes('your_stripe_publishable_key')) {
@@ -135,13 +135,30 @@ async function initializeStripe() {
             return;
         }
 
-        // Create payment intent on the server
+        // Set up the pay now button handler
+        document.getElementById('submit').addEventListener('click', handleCheckoutRedirect);
+
+        console.log('Stripe initialized successfully');
+    } catch (error) {
+        console.error('Stripe initialization error:', error);
+        showMessage(`Stripe initialization error: ${error.message}`, 'error');
+    }
+}
+
+
+// Handle form submission
+async function handleCheckoutRedirect(e) {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+        // Create checkout session
         const response = await fetch('/api/create-payment-intent', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 amount: orderData.total,
-                currency: 'inr',
+                productName: "E-Aspirant Purchase",
                 metadata: {
                     cartItems: JSON.stringify(orderData.items.map(item => ({
                         title: item.title,
@@ -153,94 +170,20 @@ async function initializeStripe() {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to create payment intent');
+            throw new Error(errorData.error || 'Failed to create checkout session');
         }
 
-        const data = await response.json();
+        const { url } = await response.json();
 
-        if (!data.clientSecret) {
-            throw new Error('No client secret returned from the server');
-        }
-
-        clientSecret = data.clientSecret;
-        paymentIntentId = data.paymentIntentId;
-
-        // Create payment form with custom appearance
-        const appearance = {
-            theme: 'night',
-            variables: {
-                colorPrimary: '#4361ee',
-                colorBackground: '#2a2a2a',
-                colorText: '#e0e0e0',
-                colorDanger: '#f44336',
-                fontFamily: 'Segoe UI, sans-serif',
-                borderRadius: '4px'
-            }
-        };
-
-        elements = stripe.elements({ appearance, clientSecret });
-
-        // Create and mount the Payment Element
-        const paymentElement = elements.create('payment');
-        paymentElement.mount('#payment-element');
-
-        // Add event listener for form submission
-        document.getElementById('payment-form').addEventListener('submit', handleSubmit);
-
-        console.log('Stripe initialized successfully');
+        // Redirect to Stripe Checkout
+        window.location.href = url;
     } catch (error) {
-        console.error('Stripe initialization error:', error);
-        showMessage(`Stripe initialization error: ${error.message}`, 'error');
-    }
-}
-
-// Handle form submission
-async function handleSubmit(e) {
-    e.preventDefault();
-
-    setLoading(true);
-
-    try {
-        if (!stripe || !elements) {
-            throw new Error('Stripe has not been initialized');
-        }
-
-        const { error, paymentIntent } = await stripe.confirmPayment({
-            elements,
-            confirmParams: {
-                // Make sure to change this to your payment completion page
-                return_url: window.location.origin + '/payment-success.html',
-            },
-            redirect: 'if_required'
-        });
-
-        if (error) {
-            throw new Error(error.message);
-        }
-
-        // If we get here, payment was successful without redirect
-        // Save order to database
-        await saveOrder();
-
-        // Show success message
-        document.getElementById('payment-success').textContent = 'Payment successful! Redirecting to confirmation page...';
-        document.getElementById('payment-success').style.display = 'block';
-
-        // Clear cart
-        localStorage.removeItem('eAspirantCart');
-        localStorage.removeItem('eAspirantPointsDiscount');
-
-        // Redirect to success page
-        setTimeout(() => {
-            window.location.href = 'payment-success.html?order_id=' + paymentIntentId;
-        }, 2000);
-    } catch (error) {
-        console.error('Payment error:', error);
+        console.error('Checkout error:', error);
         showMessage(`Payment error: ${error.message}`);
-    } finally {
         setLoading(false);
     }
 }
+
 
 // Save order to database
 async function saveOrder() {

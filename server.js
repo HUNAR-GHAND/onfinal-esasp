@@ -1,11 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv').config();
+const dotenv = require('dotenv');
 const path = require('path');
 const multer = require('multer');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+// Load environment variables first
+dotenv.config();
+
+// Initialize Stripe with API key
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.includes('your_stripe')) {
     console.error('WARNING: Stripe secret key is not properly configured!');
 }
@@ -105,36 +109,33 @@ const orderSchema = new mongoose.Schema({
 const Order = mongoose.model('Order', orderSchema);
 
 // Routes
-// In your server code (first document)
+
+// Create payment intent
 app.post('/api/create-payment-intent', async(req, res) => {
     try {
-        // Log the request body for debugging
-        console.log("Create payment intent request:", req.body);
+        const { amount, currency = 'inr', metadata = {} } = req.body;
 
-        // Extract amount from request body or set default
-        const amount = req.body.amount || 500;
+        // Validate the amount
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ error: 'Invalid payment amount' });
+        }
 
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: [{
-                price_data: {
-                    currency: 'inr',
-                    product_data: {
-                        name: req.body.productName || "Book Purchase"
-                    },
-                    unit_amount: Math.round(amount * 100) // Convert to smallest currency unit (paise)
-                },
-                quantity: 1
-            }],
-            mode: 'payment',
-            success_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/payment-success.html?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/cart.html`
+        // Create a payment intent with the order amount and currency
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round(amount * 100), // Stripe uses cents/paise
+            currency,
+            metadata,
+            automatic_payment_methods: {
+                enabled: true,
+            },
         });
 
-        console.log("Created session:", session.id, "URL:", session.url);
-        res.json({ url: session.url });
+        res.json({
+            clientSecret: paymentIntent.client_secret,
+            paymentIntentId: paymentIntent.id
+        });
     } catch (error) {
-        console.error("Stripe Error:", error);
+        console.error('Payment intent creation error:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -142,33 +143,101 @@ app.post('/api/create-payment-intent', async(req, res) => {
 app.post('/api/login', async(req, res) => {
     try {
         const { email, password } = req.body;
+
+        // Find user
         const user = await User.findOne({ email });
-        if (!user || user.password !== password) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+        if (!user) {
+            return res.status(400).json({ message: 'User not found' });
         }
-        res.json({ message: 'Login successful', user });
+
+        // In production, verify password with bcrypt
+        if (user.password !== password) {
+            return res.status(400).json({ message: 'Invalid password' });
+        }
+
+        res.json({
+            message: 'Login successful',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                profileImage: user.profileImage,
+                points: user.points
+            }
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 
+// Save order after payment
 app.post('/api/orders', async(req, res) => {
     try {
-        const { userId, items, subtotal, shipping, pointsUsed, pointsDiscount, total, paymentId } = req.body;
-        const order = new Order({ userId, items, subtotal, shipping, pointsUsed, pointsDiscount, total, paymentId, status: 'paid' });
+        const {
+            userId,
+            items,
+            subtotal,
+            shipping,
+            pointsUsed,
+            pointsDiscount,
+            total,
+            paymentId
+        } = req.body;
+
+        // Validation
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ error: 'Order items are required' });
+        }
+
+        if (typeof subtotal !== 'number' || typeof total !== 'number') {
+            return res.status(400).json({ error: 'Invalid order amounts' });
+        }
+
+        if (!paymentId) {
+            return res.status(400).json({ error: 'Payment ID is required' });
+        }
+
+        // Optional: Verify the payment status with Stripe
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentId);
+        if (paymentIntent.status !== 'succeeded') {
+            return res.status(400).json({ error: 'Payment has not been completed' });
+        }
+
+        const order = new Order({
+            userId,
+            items,
+            subtotal,
+            shipping,
+            pointsUsed: pointsUsed || 0,
+            pointsDiscount: pointsDiscount || 0,
+            total,
+            paymentId,
+            status: 'paid'
+        });
+
+        // Update user points if points were used
         if (userId && pointsUsed > 0) {
             const user = await User.findById(userId);
-            if (user && user.points >= pointsUsed) {
-                user.points -= pointsUsed;
-                await user.save();
+            if (user) {
+                if (user.points >= pointsUsed) {
+                    user.points -= pointsUsed;
+                    await user.save();
+                } else {
+                    return res.status(400).json({ error: 'Not enough points available' });
+                }
             }
         }
-        res.status(201).json({ order: await order.save() });
+
+        const savedOrder = await order.save();
+        res.status(201).json({ order: savedOrder });
     } catch (error) {
+        console.error('Save order error:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
+// Get user orders
 app.get('/api/users/:userId/orders', async(req, res) => {
     try {
         const orders = await Order.find({ userId: req.params.userId }).sort({ createdAt: -1 });
@@ -178,18 +247,42 @@ app.get('/api/users/:userId/orders', async(req, res) => {
     }
 });
 
+// Get payment status
+app.get('/api/payment/:paymentId/status', async(req, res) => {
+    try {
+        const { paymentId } = req.params;
+
+        if (!paymentId) {
+            return res.status(400).json({ error: 'Payment ID is required' });
+        }
+
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentId);
+
+        res.json({
+            status: paymentIntent.status,
+            amount: paymentIntent.amount / 100, // Convert from cents/paise back to whole currency
+            currency: paymentIntent.currency
+        });
+    } catch (error) {
+        console.error('Payment status check error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Error handling middleware for multer
 app.use((err, req, res, next) => {
     if (err instanceof multer.MulterError) {
+        // A Multer error occurred when uploading
         return res.status(400).json({ error: err.message });
+    } else if (err) {
+        // An unknown error occurred
+        return res.status(500).json({ error: err.message });
     }
-    return res.status(500).json({ error: err.message });
+    next();
 });
-// Add this to the server.js file
-app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
-    credentials: true
-}));
 
 // Start server
-app.listen(3000, () => console.log('Server running on port 3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
