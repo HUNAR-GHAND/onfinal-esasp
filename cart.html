@@ -464,7 +464,7 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="courses.html">Study Material</a></li>
                 <li><a href="current-affairs.html">Current Affairs</a></li>
-                <li><a href="books.html">Books</a></li>
+                <li><a href="books_demo.html">Books</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <div class="nav-actions">
@@ -526,6 +526,51 @@
                 </div>
 
                 <button class="checkout-btn" onclick="proceedToPayment()">Proceed to Checkout</button>
+
+                <script>
+                    async function proceedToPayment() {
+                        console.log("Proceed to Payment button clicked!");
+
+                        // Show loading state
+                        const checkoutBtn = document.querySelector('.checkout-btn');
+                        checkoutBtn.disabled = true;
+                        checkoutBtn.textContent = 'Processing...';
+
+                        try {
+                            const response = await fetch('/api/create-payment-intent', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    productName: "Book Purchase",
+                                    amount: parseFloat(document.getElementById('total').textContent.replace('₹', ''))
+                                })
+                            });
+
+                            if (!response.ok) {
+                                throw new Error('Server error: ' + response.status);
+                            }
+
+                            const session = await response.json();
+                            console.log("Received session URL:", session.url);
+
+                            if (session.url) {
+                                // Redirect to Stripe Checkout
+                                window.location.href = session.url;
+                            } else {
+                                throw new Error("No URL received from server");
+                            }
+                        } catch (error) {
+                            console.error("Error:", error);
+                            alert("Payment gateway error: " + error.message);
+
+                            // Reset button state
+                            checkoutBtn.disabled = false;
+                            checkoutBtn.textContent = 'Proceed to Checkout';
+                        }
+                    }
+                </script>
             </div>
         </div>
     </div>

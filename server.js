@@ -1,12 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
+const dotenv = require('dotenv').config();
 const path = require('path');
-const multer = require('multer'); // Add this
+const multer = require('multer');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-// Load environment variables
-dotenv.config();
+if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.includes('your_stripe')) {
+    console.error('WARNING: Stripe secret key is not properly configured!');
+}
 
 const app = express();
 
@@ -14,7 +16,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
-app.use('/uploads', express.static('uploads')); // Add this for serving uploaded files
+app.use('/uploads', express.static('uploads'));
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -37,7 +39,7 @@ const upload = multer({
         if (mimetype && extname) {
             return cb(null, true);
         } else {
-            cb('Error: Images only!');
+            cb(new Error('Error: Images only!'));
         }
     }
 });
@@ -58,7 +60,7 @@ const userSchema = new mongoose.Schema({
     phone: { type: String },
     profileImage: { type: String },
     points: { type: Number, default: 0 },
-    donations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Donation' }], // Add this
+    donations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Donation' }],
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -82,203 +84,112 @@ const donationSchema = new mongoose.Schema({
 
 const Donation = mongoose.model('Donation', donationSchema);
 
-// Existing Routes
-app.post('/api/register', async(req, res) => {
+// Order Schema
+const orderSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    items: [{
+        title: String,
+        price: Number,
+        quantity: Number
+    }],
+    subtotal: Number,
+    shipping: Number,
+    pointsUsed: Number,
+    pointsDiscount: Number,
+    total: Number,
+    paymentId: String,
+    status: { type: String, default: 'pending' },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const Order = mongoose.model('Order', orderSchema);
+
+// Routes
+// In your server code (first document)
+app.post('/api/create-payment-intent', async(req, res) => {
     try {
-        const { name, email, password, phone } = req.body;
+        // Log the request body for debugging
+        console.log("Create payment intent request:", req.body);
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
+        // Extract amount from request body or set default
+        const amount = req.body.amount || 500;
 
-        // Create new user
-        const user = new User({
-            name,
-            email,
-            password, // In production, hash this password
-            phone
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price_data: {
+                    currency: 'inr',
+                    product_data: {
+                        name: req.body.productName || "Book Purchase"
+                    },
+                    unit_amount: Math.round(amount * 100) // Convert to smallest currency unit (paise)
+                },
+                quantity: 1
+            }],
+            mode: 'payment',
+            success_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/payment-success.html?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/cart.html`
         });
 
-        await user.save();
-        res.status(201).json({ message: 'User registered successfully' });
+        console.log("Created session:", session.id, "URL:", session.url);
+        res.json({ url: session.url });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error("Stripe Error:", error);
+        res.status(500).json({ error: error.message });
     }
 });
 
 app.post('/api/login', async(req, res) => {
     try {
         const { email, password } = req.body;
-
-        // Find user
         const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: 'User not found' });
+        if (!user || user.password !== password) {
+            return res.status(400).json({ message: 'Invalid credentials' });
         }
-
-        // In production, verify password with bcrypt
-        if (user.password !== password) {
-            return res.status(400).json({ message: 'Invalid password' });
-        }
-
-        res.json({
-            message: 'Login successful',
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                profileImage: user.profileImage,
-                points: user.points
-            }
-        });
+        res.json({ message: 'Login successful', user });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ error: error.message });
     }
 });
 
-app.put('/api/profile/:userId', async(req, res) => {
+app.post('/api/orders', async(req, res) => {
     try {
-        const { name, phone, profileImage } = req.body;
-        const userId = req.params.userId;
-
-        const user = await User.findByIdAndUpdate(
-            userId, { name, phone, profileImage }, { new: true }
-        );
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-});
-
-app.put('/api/profile/:userId/password', async(req, res) => {
-    try {
-        const { currentPassword, newPassword } = req.body;
-        const userId = req.params.userId;
-
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // In production, verify current password with bcrypt
-        if (user.password !== currentPassword) {
-            return res.status(400).json({ message: 'Current password is incorrect' });
-        }
-
-        user.password = newPassword; // In production, hash this password
-        await user.save();
-
-        res.json({ message: 'Password updated successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-});
-
-// New Donation Routes
-
-// Get all donations
-app.get('/api/donations', async(req, res) => {
-    try {
-        const donations = await Donation.find().sort({ date: -1 });
-        res.json(donations);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-// Create a new donation
-app.post('/api/donations', upload.single('photo'), async(req, res) => {
-    try {
-        const {
-            name,
-            contact,
-            address,
-            bookName,
-            authorName,
-            edition,
-            amount,
-            message,
-            userId
-        } = req.body;
-
-        // Create donation record
-        const donation = new Donation({
-            name,
-            contact,
-            address,
-            photoPath: req.file ? `/uploads/${req.file.filename}` : null,
-            bookName,
-            authorName,
-            edition,
-            amount: Number(amount),
-            message,
-            points: 10
-        });
-
-        // If user is logged in, associate donation with user
-        if (userId) {
-            try {
-                const user = await User.findById(userId);
-                if (user) {
-                    donation.userId = userId;
-                    user.points += 10;
-                    if (!user.donations) {
-                        user.donations = [];
-                    }
-                    user.donations.push(donation._id);
-                    await user.save();
-                }
-            } catch (userErr) {
-                console.error('Error updating user:', userErr);
-                // Continue even if user update fails
+        const { userId, items, subtotal, shipping, pointsUsed, pointsDiscount, total, paymentId } = req.body;
+        const order = new Order({ userId, items, subtotal, shipping, pointsUsed, pointsDiscount, total, paymentId, status: 'paid' });
+        if (userId && pointsUsed > 0) {
+            const user = await User.findById(userId);
+            if (user && user.points >= pointsUsed) {
+                user.points -= pointsUsed;
+                await user.save();
             }
         }
-
-        const savedDonation = await donation.save();
-
-        res.status(201).json({
-            donation: savedDonation,
-            message: 'Donation submitted successfully'
-        });
-    } catch (err) {
-        res.status(400).json({ message: err.message });
+        res.status(201).json({ order: await order.save() });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
-// Get user's donation history
-app.get('/api/users/:userId/donations', async(req, res) => {
+app.get('/api/users/:userId/orders', async(req, res) => {
     try {
-        const userId = req.params.userId;
-        const donations = await Donation.find({ userId }).sort({ date: -1 });
-        res.json(donations);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        const orders = await Order.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
-// Get user points
-app.get('/api/users/:userId/points', async(req, res) => {
-    try {
-        const user = await User.findById(req.params.userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json({ points: user.points });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+// Error handling middleware for multer
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        return res.status(400).json({ error: err.message });
     }
+    return res.status(500).json({ error: err.message });
 });
+// Add this to the server.js file
+app.use(cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    credentials: true
+}));
 
 // Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+app.listen(3000, () => console.log('Server running on port 3000'));

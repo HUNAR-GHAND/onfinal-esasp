@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -178,6 +179,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="particles-js"></div>
     <header>
@@ -187,7 +189,7 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="courses.html">Courses</a></li>
                 <li><a href="current-affairs.html">Current Affairs</a></li>
-                <li><a href="books.html">Books</a></li>
+                <li><a href="books_demo.html">Books</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
@@ -317,14 +319,14 @@
                 }
 
                 currentUserId = userData.id;
-                
+
                 // Update UI with user data
                 document.getElementById('userName').textContent = userData.name || 'User Name';
                 document.getElementById('fullName').value = userData.name || '';
                 document.getElementById('email').value = userData.email || '';
                 document.getElementById('phone').value = userData.phone || '';
                 document.getElementById('userPoints').textContent = userData.points || 0;
-                
+
                 if (userData.profileImage) {
                     document.getElementById('profileImage').src = userData.profileImage;
                 }
@@ -343,7 +345,7 @@
                     reader.onload = async function(e) {
                         const imageData = e.target.result;
                         document.getElementById('profileImage').src = imageData;
-                        
+
                         // Update profile image in backend
                         const response = await fetch(`${API_URL}/profile/${currentUserId}`, {
                             method: 'PUT',
@@ -375,7 +377,7 @@
         // Handle personal information form
         document.getElementById('personalInfoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             try {
                 const response = await fetch(`${API_URL}/profile/${currentUserId}`, {
                     method: 'PUT',
@@ -393,13 +395,13 @@
                 }
 
                 const updatedUser = await response.json();
-                
+
                 // Update local storage
                 const userData = JSON.parse(localStorage.getItem('userData') || '{}');
                 userData.name = updatedUser.name;
                 userData.phone = updatedUser.phone;
                 localStorage.setItem('userData', JSON.stringify(userData));
-                
+
                 document.getElementById('userName').textContent = updatedUser.name;
                 alert('Personal information updated successfully!');
             } catch (error) {
@@ -411,7 +413,7 @@
         // Handle security form
         document.getElementById('securityForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             try {
                 const response = await fetch(`${API_URL}/profile/${currentUserId}/password`, {
                     method: 'PUT',
@@ -441,4 +443,5 @@
         loadUserData();
     </script>
 </body>
-</html> 
+
+</html>
