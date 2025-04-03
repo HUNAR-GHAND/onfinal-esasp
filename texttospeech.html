@@ -5,103 +5,275 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text to Speech</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f9f9f9;
-            padding: 20px;
-        }
-        
-        h1 {
-            color: #333;
-        }
-        
-        textarea {
-            width: 80%;
-            height: 100px;
-            margin-top: 10px;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        
-        select,
-        button {
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-        }
-        
-        select {
-            width: 50%;
-        }
-        
-        button {
-            background-color: #008080;
-            color: white;
-        }
-        
-        button:hover {
-            background-color: #006666;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link rel="stylesheet" href="texttospeech.css">
 </head>
 
 <body>
-    <h1>Text to Speech Converter</h1>
-    <textarea id="text" placeholder="Enter text here..."></textarea><br>
+    <div id="particles-js"></div>
+    <header>
+        <nav>
+            <div class="logo">e-Aspirants</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="courses.html">Study Material</a></li>
+                <li><a href="current-affairs.html">Current Affairs</a></li>
+                <li><a href="books_demo.html">Books</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <select id="voiceSelect"></select><br>
+    <div class="main-content">
+        <div class="container">
+            <h2>Text to Speech Converter</h2>
+            <textarea id="textInput" placeholder="Enter your text here..."></textarea>
 
-    <button onclick="speakText()">🔊 Speak</button>
-    <button onclick="pauseSpeech()">⏸ Pause</button>
-    <button onclick="resumeSpeech()">▶ Resume</button>
-    <button onclick="stopSpeech()">⏹ Stop</button>
+            <div class="controls">
+                <div class="voice-options">
+                    <label for="voice-select">Voice:</label>
+                    <select id="voice-select"></select>
+                </div>
+
+                <div class="rate-volume">
+                    <div class="rate-control">
+                        <label for="rate">Speed:</label>
+                        <input type="range" id="rate" min="0.5" max="2" value="1" step="0.1">
+                        <span id="rate-value">1</span>
+                    </div>
+
+                    <div class="volume-control">
+                        <label for="volume">Volume:</label>
+                        <input type="range" id="volume" min="0" max="1" value="1" step="0.1">
+                        <span id="volume-value">1</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button id="speak-btn">Speak</button>
+                <button id="pause-btn">Pause</button>
+                <button id="resume-btn">Resume</button>
+                <button id="stop-btn">Stop</button>
+            </div>
+
+            <a href="index.html" class="back-button">Go Back</a>
+        </div>
+    </div>
 
     <script>
-        let speech = new SpeechSynthesisUtterance();
-        let voices = [];
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true,
+            "config_demo": {
+                "hide_card": false,
+                "background_color": "#472342",
+                "background_image": "",
+                "background_position": "50% 50%",
+                "background_repeat": "no-repeat",
+                "background_size": "cover"
+            }
+        });
 
-        function loadVoices() {
-            voices = speechSynthesis.getVoices();
-            let voiceSelect = document.getElementById("voiceSelect");
+        // Text to speech script
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInput = document.getElementById('textInput');
+            const voiceSelect = document.getElementById('voice-select');
+            const rateInput = document.getElementById('rate');
+            const rateValue = document.getElementById('rate-value');
+            const volumeInput = document.getElementById('volume');
+            const volumeValue = document.getElementById('volume-value');
+            const speakBtn = document.getElementById('speak-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            const resumeBtn = document.getElementById('resume-btn');
+            const stopBtn = document.getElementById('stop-btn');
 
-            voiceSelect.innerHTML = ''; // Clear previous voices
-            voices.forEach((voice, index) => {
-                let option = document.createElement("option");
-                option.value = index;
-                option.textContent = `${voice.name} (${voice.lang})`;
-                voiceSelect.appendChild(option);
+            let voices = [];
+            let speech = null;
+
+            // Get available voices
+            function populateVoiceList() {
+                voices = window.speechSynthesis.getVoices();
+
+                // Clear existing options
+                voiceSelect.innerHTML = '';
+
+                // Add voices to select element
+                voices.forEach(voice => {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.setAttribute('data-lang', voice.lang);
+                    option.setAttribute('data-name', voice.name);
+                    voiceSelect.appendChild(option);
+                });
+            }
+
+            // Initialize voices
+            populateVoiceList();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = populateVoiceList;
+            }
+
+            // Update rate and volume values
+            rateInput.addEventListener('input', () => {
+                rateValue.textContent = rateInput.value;
             });
-        }
 
-        speechSynthesis.onvoiceschanged = loadVoices;
+            volumeInput.addEventListener('input', () => {
+                volumeValue.textContent = volumeInput.value;
+            });
 
-        function speakText() {
-            let text = document.getElementById("text").value;
-            if (text.trim() === "") return;
+            // Button event handlers
+            speakBtn.addEventListener('click', () => {
+                // Cancel any ongoing speech
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
 
-            speech.text = text;
-            speech.voice = voices[document.getElementById("voiceSelect").value];
-            speechSynthesis.speak(speech);
-        }
+                const text = textInput.value;
+                if (text.trim() === '') {
+                    alert('Please enter some text to speak');
+                    return;
+                }
 
-        function pauseSpeech() {
-            speechSynthesis.pause();
-        }
+                speech = new SpeechSynthesisUtterance(text);
 
-        function resumeSpeech() {
-            speechSynthesis.resume();
-        }
+                // Set selected voice
+                const selectedVoice = voiceSelect.selectedOptions[0].getAttribute('data-name');
+                const voice = voices.find(v => v.name === selectedVoice);
+                if (voice) {
+                    speech.voice = voice;
+                }
 
-        function stopSpeech() {
-            speechSynthesis.cancel();
-        }
+                // Set rate and volume
+                speech.rate = parseFloat(rateInput.value);
+                speech.volume = parseFloat(volumeInput.value);
+
+                window.speechSynthesis.speak(speech);
+            });
+
+            pauseBtn.addEventListener('click', () => {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.pause();
+                }
+            });
+
+            resumeBtn.addEventListener('click', () => {
+                if (window.speechSynthesis.paused) {
+                    window.speechSynthesis.resume();
+                }
+            });
+
+            stopBtn.addEventListener('click', () => {
+                window.speechSynthesis.cancel();
+            });
+        });
     </script>
 </body>
 
